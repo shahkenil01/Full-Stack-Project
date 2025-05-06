@@ -13,6 +13,8 @@ const Products = () => {
   const showBy = '';
   const categoryBy = '';
 
+  
+
   return (
     <div className="right-content w-100">
 
