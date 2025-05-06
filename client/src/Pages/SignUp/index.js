@@ -11,7 +11,7 @@ const SignUp = () =>{
 
   useEffect(()=>{
       context.setisHeaderFooterShow(false);
-  },[]);
+  },[context]);
 
   return(
       <section className="section signInPage signUpPage">
@@ -23,7 +23,7 @@ const SignUp = () =>{
         <div className="container">
           <div className="box card p-3 shadow border-0">
             <div className="text-center">
-              <img src={images.logo}/>
+              <img src={images.logo} alt="logo"/>
             </div>
             
             <form className="mt-2">
@@ -50,7 +50,7 @@ const SignUp = () =>{
                 <TextField id="standard-basic" label="Password" type="password" variant="standard" className="w-100"/>
               </div>
 
-              <a className="border-effect cursor txt">Forgot Password?</a>
+              <a href="/" className="border-effect cursor txt">Forgot Password?</a>
 
               <div className="d-flex align-items-center mt-3 mb-3 d-flex">
                 <Button className="btn-blue col btn-lg btn-big bg-blue">Sign Up</Button>
@@ -61,7 +61,7 @@ const SignUp = () =>{
 
               <h6 className="mt-4 text-center font-weight-bold">Or continue with social account</h6>
 
-              <Button className="loginWithGoogle mt-2 w-100" variant="outlined"><img src={images.Google_Icons}/>Sign In with Google</Button>
+              <Button className="loginWithGoogle mt-2 w-100" variant="outlined"><img src={images.Google_Icons} alt="Google"/>Sign In with Google</Button>
             </form>
 
           </div>

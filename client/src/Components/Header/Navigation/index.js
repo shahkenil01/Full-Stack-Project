@@ -17,7 +17,7 @@ const  Navigation=()=>{
                         <div className='catWrapper'>
                             <Button className='allCatTab align-items-center' onClick={()=>setisopenSidebarVal(!isopenSidebarVal)}>
                                 <span className='icon1 mr-2'><IoIosMenu/></span>
-                                <span class="text">ALL CATEGORIES</span>
+                                <span className="text">ALL CATEGORIES</span>
                                 <span className='icon2 ml-2'><FaAngleDown/></span>
                             </Button>
 
@@ -58,7 +58,7 @@ const  Navigation=()=>{
                     <div className='col-sm-10 navPart2 d-flex align-items-center '>
                         <ul className='list list-inline ml-auto'>
                             <li className='list-inline-item'><Link to="/cat/1">
-                                <Button><img src={images.Fashion} width="20" class="mr-2" alt="Fashion" />fashion</Button></Link>
+                                <Button><img src={images.Fashion} width="20" className="mr-2" alt="Fashion" />fashion</Button></Link>
                                 <div className='submenu shadow widh'>
                                     <Link to="/"><Button>men</Button></Link>
                                     <Link to="/"><Button>women</Button></Link>
