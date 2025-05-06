@@ -19,12 +19,12 @@ const CustomDropdown = ({ value, onChange, options = [], placeholder = "Select" 
 
   return (
     <div className={`custom-dropdown-wrapper ${open ? 'open' : ''}`} ref={dropdownRef}>
-      <div className="dropdown-select Upload" onClick={() => setOpen(!open)}>
+      <div className="dropdown-select" onClick={() => setOpen(!open)}>
         <span>{value ? options.find(o => o.value === value)?.label : <em>{placeholder}</em>}</span>
         <RiArrowDropDownFill className={`dropdown-icon ${open ? 'rotate' : ''}`} />
       </div>
       <Grow in={open}>
-        <div className="dropdown-menu Upload">
+        <div className="dropdown-menu">
           {options.map(opt => (
             <div
               key={opt.value}

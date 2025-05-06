@@ -1047,10 +1047,10 @@ textarea {
 
 .card {
   overflow: visible !important;}
-.dropdown-select.Upload {
+.product-upload .custom-dropdown-wrapper .dropdown-select {
   height: 50px;
   margin-top: -5px;}
-.dropdown-menu.Upload {
+.product-upload .custom-dropdown-wrapper .dropdown-menu {
   margin-top: 5px;}
 
 .imgUploadBox {

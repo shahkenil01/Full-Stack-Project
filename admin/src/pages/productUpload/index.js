@@ -20,7 +20,7 @@ const ProductUpload =()=>{
   const [value, setValue] = useState(0);
 
   return(
-    <div className="right-content w-100">
+    <div className="right-content w-100 product-upload">
 
       <div className="card shadow border-0 w-100 flex-row p-4 align-items-center justify-content-between mb-4 breadcrumbCard">
         <h5 className="mb-0">Product Upload</h5>
