@@ -1,16 +1,18 @@
 import { Link } from 'react-router-dom';
 
-import { FaEye, FaPencilAlt } from "react-icons/fa";
+import { FaPencilAlt } from "react-icons/fa";
 import { IoMdHome } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 
 import { Button, Breadcrumbs, Typography, Link as MuiLink } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { fetchDataFromApi } from '../../utils/api';
+import { fetchDataFromApi, deleteData } from '../../utils/api';
+import Toast from "../../components/Toast";
 
 const Category = () => {
 
   const [catData, setCatData] = useState([]);
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -19,12 +21,23 @@ const Category = () => {
         setCatData(res);
       } else {
         console.error("Failed to fetch categories:", res);
-        setCatData([]); // fallback to empty array
+        setCatData([]);
       }
     });
   }, []);
 
+  const handleDelete = async (id) => {
+      const res = await deleteData(`/api/category/${id}`);
+      if (res?.success || res?.message === 'Category and images deleted!') {
+        setCatData(prev => prev.filter(item => item._id !== id));
+        setToast({ type: "success", message: "Category deleted successfully!" });
+      } else {
+        setToast({ type: "error", message: res?.message || "Failed to delete category." });
+      }
+  };  
+
   return (
+  <>
     <div className="right-content w-100">
 
       <div className="card shadow border-0 w-100 flex-row p-4 align-items-center justify-content-between mb-4 breadcrumbCard">
@@ -76,8 +89,8 @@ const Category = () => {
                     <td>{item.color}</td>
                     <td>
                       <div className="actions d-flex align-items-center">
-                        <Button className='success' color="success" component={Link} to={`/category/edit/${item._id}`}><FaPencilAlt /></Button>
-                        <Button className='error' color="error"><MdDelete /></Button>
+                        <Link to={`/category/edit/${item._id}`}><Button className='success' color="success"><FaPencilAlt /></Button></Link>
+                        <Button className='error' color="error" onClick={() => handleDelete(item._id)}><MdDelete /></Button>
                       </div>
                     </td>
                   </tr>
@@ -89,6 +102,8 @@ const Category = () => {
         </div>
       </div>
     </div>
+    {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
+</>
   );
 };
 

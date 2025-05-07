@@ -7,14 +7,22 @@ export const fetchDataFromApi = async (url) => {
     const { data } = await axios.get(BASE_URL + url);
     return data;
   } catch (error) {
-    console.log(error);
+    console.error("GET error:", error);
     return null;
   }
 };
 
 export const postData = async (url, formData) => {
-  const { res } = await axios.post(BASE_URL + url, formData);
-  return res;
+  try {
+    const { data } = await axios.post(BASE_URL + url, formData);
+    return data;
+  } catch (error) {
+    console.error("POST error:", error);
+    return {
+      success: false,
+      message: error?.response?.data?.message || "Something went wrong",
+    };
+  }
 };
 
 export const putData = async (url, formData) => {
@@ -22,7 +30,20 @@ export const putData = async (url, formData) => {
     const { data } = await axios.put(BASE_URL + url, formData);
     return data;
   } catch (error) {
-    console.log(error);
-    return error;
+    console.error("PUT error:", error);
+    return {
+      success: false,
+      message: error?.response?.data?.message || "Something went wrong",
+    };
+  }
+};
+
+export const deleteData = async (url) => {
+  try {
+    const { data } = await axios.delete(BASE_URL + url);
+    return data;
+  } catch (error) {
+    console.error("DELETE error:", error);
+    return null;
   }
 };

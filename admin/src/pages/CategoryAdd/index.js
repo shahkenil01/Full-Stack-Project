@@ -9,43 +9,52 @@ import { FaRegImage } from 'react-icons/fa';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import { postData } from '../../utils/api';
 
+import Toast from "../../components/Toast";
+
 const CategoryAdd =()=>{
+
+  const [toast, setToast] = useState(null);
 
   const [formFields, setFormFields] = useState({
     name: '',
     images: [],
     color: ''
-  })
+  });
 
-  const changeInput = (e)=>{
-    setFormFields(()=>(
-      {
-        ...formFields,
-        [e.target.name]:e.target.value
-      }
-    ))
-  }
+  const changeInput = (e) => {
+    setFormFields((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
 
-  const addImgUrl = (e)=>{
+  const addImgUrl = (e) => {
     const arr = [];
     arr.push(e.target.value);
-    setFormFields(()=>(
-      {
-        ...formFields,
-        [e.target.name]: arr
-      }
-    ))
-  }
+    setFormFields((prev) => ({
+      ...prev,
+      images: arr
+    }));
+  };
 
-  const addCategory = (e)=>{
+  const addCategory = async (e) => {
     e.preventDefault();
-    
-    postData('/api/category/create',formFields);
 
-  }
+    const res = await postData('/api/category/create', formFields);
+
+    if (res?.success) {
+      setToast({ type: "success", message: "Category created successfully!" });
+      setFormFields({ name: '', images: [], color: '' });
+    } else {
+      setToast({ type: "error", message: res?.message || "Failed to create category." });
+    }
+    console.log("Post response:", res);
+  };
 
   return(
     <div className="right-content w-100 product-upload">
+
+    {toast && ( <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)}/>)}
 
       <div className="card shadow border-0 w-100 flex-row p-4 align-items-center justify-content-between mb-4 breadcrumbCard">
         <h5 className="mb-0">Add Category</h5>

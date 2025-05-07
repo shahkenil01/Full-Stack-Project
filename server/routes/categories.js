@@ -54,7 +54,7 @@ router.post('/create', async (req, res) => {
 
   category = await category.save();
 
-  res.status(201).json(category);
+  res.status(201).json({ success: true, message: "Category created", data: category });
 
   } catch (error) {
     console.error("Error creating category:", error);
@@ -98,10 +98,11 @@ router.delete('/:id', async (req, res) => {
     }
 
     if (category.images && category.images.length > 0) {
-      for (const img of category.images) {
-        if (img.public_id) {
-          await cloudinary.uploader.destroy(img.public_id);
-        }
+      for (const url of category.images) {
+        const parts = url.split('/');
+        const publicIdWithExtension = parts[parts.length - 1];
+        const publicId = publicIdWithExtension.split('.')[0];
+        await cloudinary.uploader.destroy(publicId);
       }
     }
 
@@ -109,7 +110,7 @@ router.delete('/:id', async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Category and images deleted!'
+      message: 'Category and its images deleted!'
     });
   } catch (error) {
     return res.status(500).json({
@@ -126,51 +127,71 @@ router.put('/:id', async (req, res) => {
   try {
     const limit = pLimit(2);
 
-    if (!Array.isArray(req.body.images) || req.body.images.length === 0) {
-      return res.status(400).json({ error: "No images provided", status: false });
+    const existing = await Category.findById(req.params.id);
+    if (!existing) {
+      return res.status(404).json({ message: 'Category not found!' });
     }
 
-    const imagesToUpload = req.body.images.map((image) => {
-      return limit(async () => {
-        const result = await cloudinary.uploader.upload(image);
-        return result;
-      });
-    });
+    const newData = {
+      name: req.body.name,
+      color: req.body.color,
+      icon: req.body.icon
+    };
 
-    const uploadStatus = await Promise.all(imagesToUpload);
+    let imageChanged = false;
+    let newImages = existing.images;
 
-    const imgurl = uploadStatus.map((item) => item.secure_url);
+    if (Array.isArray(req.body.images) && req.body.images.length > 0) {
+      const newUrls = req.body.images;
+      const oldUrls = existing.images;
 
-    if (imgurl.length === 0) {
-      return res.status(500).json({
-        error: "Images cannot be uploaded!",
-        status: false
-      });
+      const areSame =
+        newUrls.length === oldUrls.length &&
+        newUrls.every((url, i) => url === oldUrls[i]);
+
+      if (!areSame) {
+        imageChanged = true;
+
+        for (const url of oldUrls) {
+          if (typeof url === 'string' && url.includes("res.cloudinary.com")) {
+            const parts = url.split('/');
+            const lastPart = parts[parts.length - 1];
+            const publicId = lastPart.split('.')[0];
+            await cloudinary.uploader.destroy(publicId);
+          }
+        }
+
+        const imagesToUpload = newUrls.map((image) => {
+          return limit(() => cloudinary.uploader.upload(image));
+        });
+
+        const uploadStatus = await Promise.all(imagesToUpload);
+        newImages = uploadStatus.map((item) => item.secure_url);
+      }
     }
 
-    const category = await Category.findByIdAndUpdate(
+    const noTextChange =
+      existing.name === newData.name &&
+      existing.color === newData.color &&
+      existing.icon === newData.icon;
+
+    if (!imageChanged && noTextChange) {
+      return res.status(200).json({ message: "Nothing to update", status: false });
+    }
+
+    const updatedCategory = await Category.findByIdAndUpdate(
       req.params.id,
       {
-        name:req.body.name,
-        icon: req.body.icon,
-        color: req.body.color
+        ...newData,
+        images: newImages
       },
       { new: true }
     );
 
-    if (!category) {
-      return res.status(500).json({
-        message: 'Category cannot be updated!',
-        success: false
-      });
-    }
+    return res.status(200).json({ message: "Category updated", data: updatedCategory });
 
-    res.send(category);
   } catch (error) {
-    res.status(500).json({
-      message: 'Something went wrong.',
-      error: error.message
-    });
+    return res.status(500).json({ message: "Something went wrong", error: error.message });
   }
 });
 

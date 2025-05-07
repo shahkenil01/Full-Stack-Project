@@ -101,7 +101,7 @@ router.get('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-    const product = await Product.findByIdAndDelete(req.params.id);
+    const product = await Product.findById(req.params.id);
 
     if (!product) {
       return res.status(404).json({
@@ -110,12 +110,16 @@ router.delete('/:id', async (req, res) => {
       });
     }
 
-    for (const url of product.images) {
-      const parts = url.split('/');
-      const publicIdWithExtension = parts[parts.length - 1];
-      const publicId = publicIdWithExtension.split('.')[0];
-      await cloudinary.uploader.destroy(publicId);
+    if (product.images && product.images.length > 0) {
+      for (const url of product.images) {
+        const parts = url.split('/');
+        const publicIdWithExtension = parts[parts.length - 1];
+        const publicId = publicIdWithExtension.split('.')[0];
+        await cloudinary.uploader.destroy(publicId);
+      }
     }
+
+    await Product.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
       message: "The product and its images are deleted!",
@@ -132,64 +136,77 @@ router.put('/:id', async (req, res) => {
   try {
     const limit = pLimit(2);
 
-    if (!Array.isArray(req.body.images) || req.body.images.length === 0) {
-      return res.status(400).json({ error: "No images provided", status: false });
+    const existing = await Product.findById(req.params.id);
+    if (!existing) {
+      return res.status(404).json({ message: 'Product not found!' });
     }
 
-    const imagesToUpload = req.body.images.map((image) => {
-      return limit(async () => {
-        const result = await cloudinary.uploader.upload(image);
-        return result;
-      });
-    });
+    const newData = {
+      name: req.body.name,
+      description: req.body.description,
+      richDescription: req.body.richDescription,
+      brand: req.body.brand,
+      price: req.body.price,
+      category: req.body.category,
+      countInStock: req.body.countInStock,
+      rating: req.body.rating,
+      numReviews: req.body.numReviews,
+      isFeatured: req.body.isFeatured
+    };
 
-    const uploadStatus = await Promise.all(imagesToUpload);
+    let imageChanged = false;
+    let newImages = existing.images;
 
-    const imgurl = uploadStatus.map((item) => {
-      return item.secure_url;
-    });
+    if (Array.isArray(req.body.images) && req.body.images.length > 0) {
+      const newUrls = req.body.images;
+      const oldUrls = existing.images;
 
-    if (!uploadStatus) {
-      return res.status(500).json({
-        error: "Images cannot be uploaded!",
-        status: false
-      });
+      const areSame =
+        newUrls.length === oldUrls.length &&
+        newUrls.every((url, i) => url === oldUrls[i]);
+
+      if (!areSame) {
+        imageChanged = true;
+
+        for (const url of oldUrls) {
+          if (typeof url === 'string' && url.includes("res.cloudinary.com")) {
+            const parts = url.split('/');
+            const lastPart = parts[parts.length - 1];
+            const publicId = lastPart.split('.')[0];
+            await cloudinary.uploader.destroy(publicId);
+          }
+        }
+
+        const imagesToUpload = newUrls.map((image) => {
+          return limit(() => cloudinary.uploader.upload(image));
+        });
+
+        const uploadStatus = await Promise.all(imagesToUpload);
+        newImages = uploadStatus.map((item) => item.secure_url);
+      }
     }
 
-    const product = await Product.findByIdAndUpdate(
+    const noTextChange = Object.entries(newData).every(
+      ([key, val]) => existing[key] == val
+    );
+
+    if (!imageChanged && noTextChange) {
+      return res.status(200).json({ message: "Nothing to update", status: false });
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
       {
-        name: req.body.name,
-        description: req.body.description,
-        images: imgurl,
-        brand: req.body.brand,
-        price: req.body.price,
-        category: req.body.category,
-        countInStock: req.body.countInStock,
-        rating: req.body.rating,
-        numReviews: req.body.numReviews,
-        isFeatured: req.body.isFeatured
+        ...newData,
+        images: newImages
       },
       { new: true }
     );
 
-    if (!product) {
-      return res.status(404).json({
-        message: 'The product cannot be updated!',
-        status: false
-      });
-    }
-
-    return res.status(200).json({
-      message: 'The product is updated!',
-      status: true
-    });
+    return res.status(200).json({ message: "Product updated", data: updatedProduct });
 
   } catch (error) {
-    return res.status(500).json({
-      message: 'Internal Server Error',
-      error: error.message
-    });
+    return res.status(500).json({ message: "Something went wrong", error: error.message });
   }
 });
 
