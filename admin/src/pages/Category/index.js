@@ -1,0 +1,91 @@
+import { Link } from 'react-router-dom';
+
+import { FaEye, FaPencilAlt } from "react-icons/fa";
+import { IoMdHome } from "react-icons/io";
+import { MdDelete } from "react-icons/md";
+
+import { Button, Breadcrumbs, Typography, Link as MuiLink } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { fetchDataFromApi } from '../../utils/api';
+
+const Category = () => {
+
+  const [catData, setCatData] = useState([]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    fetchDataFromApi('/api/category').then((res) => {
+      setCatData(res);
+      console.log(res);
+    });
+  }, []);
+
+  return (
+    <div className="right-content w-100">
+
+      <div className="card shadow border-0 w-100 flex-row p-4 align-items-center justify-content-between mb-4 breadcrumbCard">
+        <h5 className="mb-0">Category List</h5>
+        <div className="d-flex align-items-center">
+          <Breadcrumbs aria-label="breadcrumb">
+            <MuiLink component={Link} underline="hover" color="inherit" to="/" className="breadcrumb-link">
+              <IoMdHome/>Dashboard
+            </MuiLink>
+            <Typography className="breadcrumb-current" component="span" sx={{ padding: '6px 10px', borderRadius: '16px' }}>
+              Category
+            </Typography>
+          </Breadcrumbs>
+          <Button className='btn-blue ml-3 pl-3 pr-3' component={Link} to="/category/add">Add Category</Button>
+        </div>
+      </div>
+
+      <div className="card shadow border-0 p-3 mt-4">
+
+        <div className="table-responsive mt-3">
+          <table className="table table-bordered v-align">
+            <thead className="thead-dark">
+              <tr>
+                <th style={{ width: "100px" }}>IMAGE</th>
+                <th>CATEGORY</th>
+                <th>COLOR</th>
+                <th>ACTIONS</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {catData.length !== 0 && catData?.map((item, index) => {
+                return (
+                  <tr>
+                    <td>
+                      <div className="d-flex align-items-center productBox" style={{ width: "150px" }}>
+                        <div className="imgWrapper" style={{ width: "50px", height: "50px" }}>
+                          <div className="img card shadow m-0">
+                            <img
+                              src={item.images[0]}
+                              alt="Product"
+                              style={{ height: "100%", objectFit: "cover", borderRadius: "6px" }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{item.name}</td>
+                    <td>{item.color}</td>
+                    <td>
+                      <div className="actions d-flex align-items-center">
+                        <Button className='success' color="success" component={Link} to={`/category/edit/${item._id}`}><FaPencilAlt /></Button>
+                        <Button className='error' color="error"><MdDelete /></Button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Category;

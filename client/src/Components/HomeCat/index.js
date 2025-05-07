@@ -68,4 +68,53 @@ const HomeCat = () => {
     )
 }
 
-export default HomeCat
+export default HomeCat;
+
+
+
+{/*import React, { useState, useEffect } from "react";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+
+const HomeCat = () => {
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        // Fetch data from the backend
+        fetch('/api/categories')  // Replace with your actual API endpoint
+            .then((response) => response.json())
+            .then((data) => setCategories(data))
+            .catch((error) => console.error('Error fetching categories:', error));
+    }, []);
+
+    return (
+        <div className="container">
+            <section className="homeCat">
+                <div className="container">
+                    <h3 className="mb-3 hd">Featured Categories</h3>
+                    <Swiper
+                        slidesPerView={8}
+                        spaceBetween={8}
+                        navigation={false}
+                        slidesPerGroup={1}
+                        modules={[Navigation]}
+                        className="mySwiper4"
+                    > 
+                        {categories.map((category) => (
+                            <SwiperSlide key={category._id}>
+                                <div className="item text-center cursor" style={{backgroundColor: category.color}}>
+                                    <img src={category.images[0]} alt={category.name} />
+                                </div>
+                                <h6>{category.name}</h6>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+                </div>
+            </section>
+        </div>
+    );
+};
+
+export default HomeCat;*/}

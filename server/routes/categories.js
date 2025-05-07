@@ -88,18 +88,28 @@ router.get('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-    const deletedUser = await Category.findByIdAndDelete(req.params.id);
+    const category = await Category.findById(req.params.id);
 
-    if (!deletedUser) {
+    if (!category) {
       return res.status(404).json({
         message: 'Category not found!',
         success: false
-        });
+      });
+    }
+
+    if (category.images && category.images.length > 0) {
+      for (const img of category.images) {
+        if (img.public_id) {
+          await cloudinary.uploader.destroy(img.public_id);
+        }
       }
+    }
+
+    await Category.findByIdAndDelete(req.params.id);
 
     return res.status(200).json({
       success: true,
-      message: 'Category Deleted!'
+      message: 'Category and images deleted!'
     });
   } catch (error) {
     return res.status(500).json({
@@ -108,6 +118,7 @@ router.delete('/:id', async (req, res) => {
     });
   }
 });
+
 
 
 

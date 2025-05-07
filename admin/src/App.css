@@ -488,8 +488,7 @@ body.dark .imgUploadBox .uploadBox * { color: #ffffffb3 !important; }
   flex: 0 0 100%;}
 
 .right-content{
-  padding: 90px 30px;
-  padding-bottom: 10px;}
+  padding: 78px 30px 10px;}
 
 .dashboardBoxWrapper{
   gap: 20px;
@@ -655,6 +654,7 @@ body.dark .dropdown-item:focus {
 .card{
   margin: 20px 0px;
   border-radius: 10px;
+  overflow: visible !important;
   overflow: hidden;}
 .card .hd{
   font-size: 18px;
@@ -1045,8 +1045,6 @@ textarea {
   height: 120px;
   padding-top: 15px;}
 
-.card {
-  overflow: visible !important;}
 .product-upload .custom-dropdown-wrapper .dropdown-select {
   height: 50px;
   margin-top: -5px;}

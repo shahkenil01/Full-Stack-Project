@@ -12,11 +12,16 @@ import NotFound from './pages/NotFound';
 import ProductDetails from './pages/ProductDetails';
 import Products from './pages/Products';
 import ProductUpload from './pages/productUpload';
+import Category from './pages/Category';
+import CategoryAdd from './pages/CategoryAdd';
+import CategoryEdit from './pages/CategoryEdit';
+import { useParams } from 'react-router-dom';
 
 const MyContext = createContext();
 
 function AppWrapper() {
   const location = useLocation();
+  const { id } = useParams();
 
   const [isToggleSidebar, setIsToggleSidebar] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
@@ -54,7 +59,10 @@ function AppWrapper() {
     { path: "/signUp" },
     { path: "/products" },
     { path: "/product/details" },
-    { path: "/product/upload" }
+    { path: "/product/upload" },
+    { path: "/category" },
+    { path: "/category/add" },
+    { path: "/category/edit/:id" }
   ];
 
   const matchedRoutes = matchRoutes(routes, location);
@@ -83,6 +91,9 @@ function AppWrapper() {
             <Route path="/products" element={<Products />} />
             <Route path="/product/details" element={<ProductDetails />} />
             <Route path="/product/upload" element={<ProductUpload />} />
+            <Route path="/category" element={<Category />} />
+            <Route path="/category/add" element={<CategoryAdd />} />
+            <Route path="/category/edit/:id" element={<CategoryEdit />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
