@@ -6,6 +6,7 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 
 import { fetchDataFromApi, putData } from '../../utils/api';
 import { useParams } from 'react-router-dom';
+import Toast from "../../components/Toast";
 
 const CategoryEdit = () => {
   const [formFields, setFormFields] = useState({
@@ -13,6 +14,8 @@ const CategoryEdit = () => {
     images: [],
     color: ''
   });
+
+  const [toast, setToast] = useState(null);
 
   const changeInput = (e) => {
     setFormFields((prev) => ({
@@ -32,9 +35,13 @@ const CategoryEdit = () => {
 
   const addCategory = (e) => {
     e.preventDefault();
-
+  
     putData(`/api/category/${id}`, formFields).then((res) => {
-      console.log("Category updated!", res);
+      if (res?.success) {
+        setToast({ type: "success", message: "Category updated successfully!" });
+      } else {
+        setToast({ type: "error", message: res?.message || "Failed to update category." });
+      }
     });
   };
 
@@ -56,6 +63,8 @@ const CategoryEdit = () => {
 
   return (
     <div className="right-content w-100 product-upload">
+      {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
+
       <div className="card shadow border-0 w-100 flex-row p-4 align-items-center justify-content-between mb-4 breadcrumbCard">
         <h5 className="mb-0">Edit Category</h5>
         <Breadcrumbs aria-label="breadcrumb">

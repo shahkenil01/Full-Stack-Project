@@ -176,7 +176,7 @@ router.put('/:id', async (req, res) => {
       existing.icon === newData.icon;
 
     if (!imageChanged && noTextChange) {
-      return res.status(200).json({ message: "Nothing to update", status: false });
+      return res.status(200).json({ message: "Nothing to update", success: true });
     }
 
     const updatedCategory = await Category.findByIdAndUpdate(

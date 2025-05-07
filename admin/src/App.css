@@ -1122,3 +1122,11 @@ textarea {
   font-size: 15px;
   opacity: .5;
   text-align: center;}
+
+.toast-success {
+  background-color: #28a745 !important; /* Green */
+}
+
+.toast-error {
+  background-color: #dc3545 !important; /* Red */
+}
