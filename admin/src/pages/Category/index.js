@@ -15,8 +15,12 @@ const Category = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchDataFromApi('/api/category').then((res) => {
-      setCatData(res);
-      console.log(res);
+      if (Array.isArray(res)) {
+        setCatData(res);
+      } else {
+        console.error("Failed to fetch categories:", res);
+        setCatData([]); // fallback to empty array
+      }
     });
   }, []);
 
