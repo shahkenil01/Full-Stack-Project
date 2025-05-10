@@ -39,6 +39,10 @@ router.post('/create', async (req, res) => {
     });
   }
 
+  const existingCategory = await Category.findOne({ name: req.body.name.trim() });
+  if (existingCategory) {
+    return res.status(400).json({ success: false, message: "Category name already exists" });
+  }
   let category = new Category({
     name: req.body.name,
     images: imgurl,
@@ -159,6 +163,13 @@ router.put('/:id', async (req, res) => {
       color: req.body.color,
       icon: req.body.icon
     };
+
+    if (newData.name && newData.name.trim() !== existing.name) {
+      const duplicate = await Category.findOne({ name: newData.name.trim() });
+      if (duplicate && duplicate._id.toString() !== req.params.id) {
+        return res.status(400).json({ success: false, message: "Category Name already exists!" });
+      }
+    }
 
     let imageChanged = false;
     let newImages = existing.images;

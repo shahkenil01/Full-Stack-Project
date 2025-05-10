@@ -63,7 +63,7 @@ const CategoryAdd =()=>{
         }
       });
     } else {
-      setToast({ type: "error", message: res?.message || "Failed to create category." });
+      setToast({ type: "error", message: res?.message === "Category name already exists" ? "Category name already exists!" : res?.message || "Failed to create category." });
     }
     console.log("Post response:", res);
     setLoading(false);
