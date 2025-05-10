@@ -14,8 +14,8 @@ import Toast from "../../components/Toast";
 const CategoryAdd =()=>{
 
   const navigate = useNavigate();
-  const location = useLocation();
   const [toast, setToast] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [formFields, setFormFields] = useState({
     name: '',
@@ -41,6 +41,18 @@ const CategoryAdd =()=>{
 
   const addCategory = async (e) => {
     e.preventDefault();
+
+    if (
+      !formFields.name.trim() ||
+      !formFields.color.trim() ||
+      !formFields.images ||
+      !formFields.images[0]?.trim()
+    ) {
+      setToast({ type: "error", message: "Please fill all the details" });
+      return;
+    }
+
+    setLoading(true);
   
     const res = await postData('/api/category/create', formFields);
   
@@ -54,6 +66,7 @@ const CategoryAdd =()=>{
       setToast({ type: "error", message: res?.message || "Failed to create category." });
     }
     console.log("Post response:", res);
+    setLoading(false);
   };
 
   return(
@@ -93,7 +106,11 @@ const CategoryAdd =()=>{
                 <h6>Color</h6>
                 <input type="text" name="color" onChange={changeInput}/>
               </div>
-              <Button type='submit' className='btn-blue btn-lg btn-big w-100'><FaCloudUploadAlt/> &nbsp; PUBLISH AND VIEW </Button>
+              <Button type='submit' className='btn-blue btn-lg btn-big w-100' disabled={loading}>
+                <FaCloudUploadAlt/>
+                &nbsp;
+                {loading ? <span className="dot-loader"></span> : "PUBLISH AND VIEW"}
+              </Button>
 
               {/**<div className='imagesUploadSec'>
                 <h5 class="mb-4">Media And Published</h5>

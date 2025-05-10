@@ -10,7 +10,7 @@ import Toast from "../../components/Toast";
 const CategoryEdit = () => {
 
   const navigate = useNavigate();
-  const location = useLocation();
+  const [loading, setLoading] = useState(false);
   const [formFields, setFormFields] = useState({
     name: '',
     images: [],
@@ -37,6 +37,7 @@ const CategoryEdit = () => {
 
   const addCategory = (e) => {
     e.preventDefault();
+    setLoading(true);
   
     putData(`/api/category/${id}`, formFields).then((res) => {
       if (res?.message === "Category updated") {
@@ -48,6 +49,7 @@ const CategoryEdit = () => {
       } else {
         setToast({ type: "error", message: res?.message || "Failed to update category." });
       }
+      setLoading(false);
     });
   };
 
@@ -102,7 +104,11 @@ const CategoryEdit = () => {
                 <h6>Color</h6>
                 <input type="text" name="color" value={formFields.color} onChange={changeInput} />
               </div>
-              <Button type='submit' className='btn-blue btn-lg btn-big w-100'><FaCloudUploadAlt/> &nbsp; PUBLISH AND VIEW </Button>
+              <Button type='submit' className='btn-blue btn-lg btn-big w-100' disabled={loading}>
+                <FaCloudUploadAlt/>
+                &nbsp;
+                {loading ? <span className="dot-loader"></span> : "PUBLISH AND VIEW"}
+              </Button>
             </div>
           </div>
         </div>

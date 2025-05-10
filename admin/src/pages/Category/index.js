@@ -35,19 +35,21 @@ const Category = () => {
   }, [location.state]);
 
   const handleDelete = async (id) => {
-      const res = await deleteData(`/api/category/${id}`);
-      if (res?.success || res?.message === 'Category and images deleted!') {
-        setCatData(prev => prev.filter(item => item._id !== id));
-        setToast({ type: "success", message: "Category deleted successfully!" });
-      } else {
-        setToast({ type: "error", message: res?.message || "Failed to delete category." });
-      }
+    const res = await deleteData(`/api/category/${id}`);
+    if (res?.success || res?.message === 'Category and images deleted!') {
+      setCatData(prev => ({
+        ...prev,
+        categoryList: prev.categoryList.filter(item => item._id !== id)
+      }));
+      setToast({ type: "success", message: "Category deleted successfully!" });
+    } else {
+      setToast({ type: "error", message: res?.message || "Failed to delete category." });
+    }
   };
 
   const handleChange = (event, value) => {
     fetchDataFromApi(`/api/category?page=${value}`).then((res) => {
       setCatData(res);
-      console.log(res);
     })
   }
 
