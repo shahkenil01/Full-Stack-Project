@@ -16,6 +16,8 @@ const ProductUpload =()=>{
   const [subcategory, setSubcategory] = useState('');
   const [isFeatured, setIsFeatured] = useState('');
   const [ram, setRam] = useState(''); 
+  const [weight, setWeight] = useState(''); 
+  const [size, setSize] = useState(''); 
   
   const [value, setValue] = useState(0);
 
@@ -143,7 +145,37 @@ const ProductUpload =()=>{
                 </div>
               </div>
               <div class="row">
-                <div class="col-md-4">
+                <div className="col">
+                  <div className='form-group'>
+                    <h6>PRODUCT WEIGHT</h6>
+                    <FormControl size="small" className="w-100">
+                      <CustomDropdown value={weight} onChange={setWeight}
+                        options={[
+                          { value: '', label: 'None' },
+                          { value: '10', label: '15KG' },
+                          { value: '20', label: '5KG' },
+                        ]} placeholder="None" menuPortalTarget={document.body}/>
+                    </FormControl>
+                  </div>
+                </div>
+                <div className="col">
+                  <div className='form-group'>
+                    <h6>PRODUCT SIZE</h6>
+                    <FormControl size="small" className="w-100">
+                      <CustomDropdown value={size} onChange={setSize}
+                        options={[
+                          { value: '', label: 'None' },
+                          { value: '10', label: 'S' },
+                          { value: '20', label: 'M' },
+                          { value: '30', label: 'L' },
+                          { value: '40', label: 'XL' },
+                          { value: '50', label: 'XXL' },
+                          { value: '60', label: 'XXXL' }
+                        ]} placeholder="None" menuPortalTarget={document.body}/>
+                    </FormControl>
+                  </div>
+                </div>
+                <div class="col">
                   <div class="form-group">
                     <h6>RATINGS</h6>
                     <Rating

@@ -150,7 +150,6 @@ router.put('/:id', async (req, res) => {
       category: req.body.category,
       countInStock: req.body.countInStock,
       rating: req.body.rating,
-      numReviews: req.body.numReviews,
       isFeatured: req.body.isFeatured
     };
 

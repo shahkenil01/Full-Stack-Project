@@ -1140,14 +1140,10 @@ textarea {
   vertical-align: middle;}
 @keyframes spin {
   to {
-    transform: rotate(360deg);
-  }
-}
+    transform: rotate(360deg); }}
 
 #nprogress {
-  pointer-events: none;
-}
-
+  pointer-events: none;}
 #nprogress .bar {
   background: #0858f7 !important;
   height: 5px !important;
@@ -1155,5 +1151,15 @@ textarea {
   z-index: 1031;
   top: 0;
   left: 0;
-  width: 100%;
-}
+  width: 100%;}
+
+.form-group label {
+  display: inline-flex;
+  align-items: center;
+  font-size: 16px;
+  margin-right: 20px;
+  cursor: pointer;}
+.form-group input[type="radio"] {
+  margin-right: 6px;
+  width: 18px;
+  height: 18px;}
