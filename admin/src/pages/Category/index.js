@@ -4,7 +4,7 @@ import { FaPencilAlt } from "react-icons/fa";
 import { IoMdHome } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 
-import { Button, Breadcrumbs, Typography, Link as MuiLink } from '@mui/material';
+import { Button, Breadcrumbs, Typography, Link as MuiLink, Pagination } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { fetchDataFromApi, deleteData } from '../../utils/api';
 import Toast from "../../components/Toast";
@@ -18,11 +18,11 @@ const Category = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchDataFromApi('/api/category').then((res) => {
-      if (Array.isArray(res)) {
+      if (res?.categoryList && Array.isArray(res.categoryList)) {
         setCatData(res);
       } else {
         console.error("Failed to fetch categories:", res);
-        setCatData([]);
+        setCatData({ categoryList: [], totalPages: 1, page: 1 });
       }
     });
   }, []);
@@ -42,7 +42,14 @@ const Category = () => {
       } else {
         setToast({ type: "error", message: res?.message || "Failed to delete category." });
       }
-  };  
+  };
+
+  const handleChange = (event, value) => {
+    fetchDataFromApi(`/api/category?page=${value}`).then((res) => {
+      setCatData(res);
+      console.log(res);
+    })
+  }
 
   return (
   <>
@@ -69,17 +76,17 @@ const Category = () => {
           <table className="table table-bordered v-align">
             <thead className="thead-dark">
               <tr>
-                <th style={{ width: "100px" }}>IMAGE</th>
-                <th>CATEGORY</th>
-                <th>COLOR</th>
-                <th>ACTIONS</th>
+                <th style={{ width: "15%" }}>IMAGE</th>
+                <th style={{ width: "35%" }}>CATEGORY</th>
+                <th style={{ width: "25%" }}>COLOR</th>
+                <th style={{ width: "25%" }}>ACTIONS</th>
               </tr>
             </thead>
 
             <tbody>
-              {catData.length !== 0 && catData?.map((item, index) => {
+              {catData?.categoryList?.length !== 0 && catData?.categoryList?.map((item, index) => {
                 return (
-                  <tr>
+                  <tr key={item._id}>
                     <td>
                       <div className="d-flex align-items-center productBox" style={{ width: "150px" }}>
                         <div className="imgWrapper" style={{ width: "50px", height: "50px" }}>
@@ -107,6 +114,9 @@ const Category = () => {
             </tbody>
 
           </table>
+          <div class="d-flex tableFooter">
+            <Pagination count={catData?.totalPages} color="primary" className='pagination' onChange={handleChange} />
+          </div>
         </div>
       </div>
     </div>
