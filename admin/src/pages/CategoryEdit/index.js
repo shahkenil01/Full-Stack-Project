@@ -22,7 +22,7 @@ const CategoryEdit = () => {
     color: ''
   });
 
-  const [images, setImages] = useState([]); // for previews
+  const [images, setImages] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
 
   useEffect(() => {
