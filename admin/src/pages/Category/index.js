@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import { FaPencilAlt } from "react-icons/fa";
 import { IoMdHome } from "react-icons/io";
@@ -13,6 +13,7 @@ const Category = () => {
 
   const [catData, setCatData] = useState([]);
   const [toast, setToast] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -25,6 +26,13 @@ const Category = () => {
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (location.state?.toast) {
+      setToast(location.state.toast);
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const handleDelete = async (id) => {
       const res = await deleteData(`/api/category/${id}`);

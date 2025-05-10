@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Breadcrumbs, Typography, Link as MuiLink, Button } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { IoMdHome } from "react-icons/io";
 import { FaCloudUploadAlt } from "react-icons/fa";
 
@@ -13,6 +13,8 @@ import Toast from "../../components/Toast";
 
 const CategoryAdd =()=>{
 
+  const navigate = useNavigate();
+  const location = useLocation();
   const [toast, setToast] = useState(null);
 
   const [formFields, setFormFields] = useState({
@@ -39,12 +41,15 @@ const CategoryAdd =()=>{
 
   const addCategory = async (e) => {
     e.preventDefault();
-
+  
     const res = await postData('/api/category/create', formFields);
-
+  
     if (res?.success) {
-      setToast({ type: "success", message: "Category created successfully!" });
-      setFormFields({ name: '', images: [], color: '' });
+      navigate("/category", {
+        state: {
+          toast: { type: "success", message: "Category created successfully!" }
+        }
+      });
     } else {
       setToast({ type: "error", message: res?.message || "Failed to create category." });
     }

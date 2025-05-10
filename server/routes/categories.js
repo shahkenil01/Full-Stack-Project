@@ -188,7 +188,7 @@ router.put('/:id', async (req, res) => {
       { new: true }
     );
 
-    return res.status(200).json({ message: "Category updated", data: updatedCategory });
+    return res.status(200).json({ success: true, message: "Category updated", data: updatedCategory });
 
   } catch (error) {
     return res.status(500).json({ message: "Something went wrong", error: error.message });

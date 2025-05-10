@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Breadcrumbs, Typography, Link as MuiLink, Button } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useParams, useNavigate, useLocation  } from 'react-router-dom';
 import { IoMdHome } from "react-icons/io";
 import { FaCloudUploadAlt } from "react-icons/fa";
 
 import { fetchDataFromApi, putData } from '../../utils/api';
-import { useParams } from 'react-router-dom';
 import Toast from "../../components/Toast";
 
 const CategoryEdit = () => {
+
+  const navigate = useNavigate();
+  const location = useLocation();
   const [formFields, setFormFields] = useState({
     name: '',
     images: [],
@@ -37,8 +39,12 @@ const CategoryEdit = () => {
     e.preventDefault();
   
     putData(`/api/category/${id}`, formFields).then((res) => {
-      if (res?.success) {
-        setToast({ type: "success", message: "Category updated successfully!" });
+      if (res?.message === "Category updated") {
+        navigate("/category", {
+          state: {
+            toast: { type: "success", message: "Category updated successfully!" }
+          }
+        });
       } else {
         setToast({ type: "error", message: res?.message || "Failed to update category." });
       }
