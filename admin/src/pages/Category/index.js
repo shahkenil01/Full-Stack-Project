@@ -37,15 +37,20 @@ const Category = () => {
   const handleDelete = async (id) => {
     const res = await deleteData(`/api/category/${id}`);
     if (res?.success || res?.message === 'Category and images deleted!') {
-      setCatData(prev => ({
-        ...prev,
-        categoryList: prev.categoryList.filter(item => item._id !== id)
-      }));
+      const currentPage = catData.page;
+      const totalItems = catData.categoryList.length - 1;
+      const perPage = 4;
+  
+      const newPage = totalItems === 0 && currentPage > 1 ? currentPage - 1 : currentPage;
+  
+      const updated = await fetchDataFromApi(`/api/category?page=${newPage}`);
+      setCatData(updated);
+      
       setToast({ type: "success", message: "Category deleted successfully!" });
     } else {
       setToast({ type: "error", message: res?.message || "Failed to delete category." });
     }
-  };
+  };  
 
   const handleChange = (event, value) => {
     fetchDataFromApi(`/api/category?page=${value}`).then((res) => {
