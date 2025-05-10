@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes, useLocation, matchRoutes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation, matchRoutes, useParams } from 'react-router-dom';
 import "bootstrap/dist/css/bootstrap.min.css"
 import './App.css';
 import ScrollToTop from './components/ScrollToTop';
@@ -15,7 +15,7 @@ import ProductUpload from './pages/productUpload';
 import Category from './pages/Category';
 import CategoryAdd from './pages/CategoryAdd';
 import CategoryEdit from './pages/CategoryEdit';
-import { useParams } from 'react-router-dom';
+import TopLoadingBar from './components/TopLoadingBar';
 
 const MyContext = createContext();
 
@@ -56,7 +56,7 @@ function AppWrapper() {
     { path: "/" },
     { path: "/dashboard" },
     { path: "/login" },
-    { path: "/signUp" },
+    { path: "/signup" },
     { path: "/products" },
     { path: "/product/details" },
     { path: "/product/upload" },
@@ -66,11 +66,28 @@ function AppWrapper() {
   ];
 
   const matchedRoutes = matchRoutes(routes, location);
+  const skipLoaderRoutes = [
+    '/login',
+    '/signup',
+    '/category/add',
+    '/product/upload',
+  ];
+  const dynamicSkipRoutes = [
+    '/category/edit/',
+    '/product/edit/',
+  ];
 
-  const hideLayout = !matchedRoutes || ['/login', '/signUp'].includes(location.pathname);
+  const hideLayout = !matchedRoutes || ['/login', '/signup'].includes(location.pathname);
+  
+  const isNotFoundPage = !matchedRoutes;
+  const skipLoader =
+    isNotFoundPage ||
+    skipLoaderRoutes.includes(location.pathname) ||
+    dynamicSkipRoutes.some(path => location.pathname.startsWith(path));
 
   return (
     <MyContext.Provider value={values}>
+    <TopLoadingBar skip={skipLoader} />
       {
         !hideLayout && <Header />
       }
@@ -87,7 +104,7 @@ function AppWrapper() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/signUp" element={<SignUp />} />
+            <Route path="/signup" element={<SignUp />} />
             <Route path="/products" element={<Products />} />
             <Route path="/product/details" element={<ProductDetails />} />
             <Route path="/product/upload" element={<ProductUpload />} />
